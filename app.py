@@ -8,7 +8,7 @@ import os
 from functools import wraps
 
 app = Flask(__name__)
-app.secret_key = 'your-secret-key-change-in-production'
+app.secret_key = '85c7eae050864a8cffdc4c1b30b0277c78700ec9d336a2379f38da185a925a0b'
 
 # AWS Configuration
 AWS_REGION = 'us-east-1'
@@ -64,13 +64,15 @@ def doctor_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+SNS_TOPIC_ARN = 'arn:aws:sns:us-east-1:463470967337:Medtrack:f5b1f99d-ce21-4b35-a986-63b0ba011834'  # <-- Replace with your real ARN
+
 def send_sms_notification(phone_number, message):
-    """Send SMS notification using AWS SNS"""
     try:
         if sns:
             response = sns.publish(
-                PhoneNumber=phone_number,
-                Message=message
+                TopicArn=SNS_TOPIC_ARN,
+                Message=message,
+                Subject="Appointment Notification"
             )
             return response
     except Exception as e:
